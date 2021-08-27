@@ -1,7 +1,5 @@
 
-#todo convert to add prefix for risk tolerance H | M | L
-#todo input is a file name (full path)
-#todo output is input+rt [risk tolerance]
+
 
 from xml.etree import ElementTree
 import os.path
@@ -96,7 +94,6 @@ def format(target, percent):
                     id = 'rand' + id
                     att.set('id', id)
 
-    #todo clean so not dependent on sys.argv[1] (number)
     myfile = mypath + "CAV" + str(percent).zfill(3) + '_' + str(number)
     tree.write(myfile)
 
