@@ -35,8 +35,8 @@ def run():
 
     #setup VMT logfile
     log = logname + "platoon_status.xml"
-    #file = '/home/thomasrw/Desktop/' + log
-    file = '/work/thoma525/' + log
+    file = '/home/thomasrw/Desktop/' + log
+    #file = '/work/thoma525/' + log
 
     logfile = open(file, 'w')
     logfile.write('<platoon_status>\n')
@@ -87,13 +87,18 @@ logname = sys.argv[1]
 logname = logname + "_"
 
 demandfile = sys.argv[2]
-demandpath = "/work/thoma525/"
+#demandpath = "/work/thoma525/"
+demandpath = "/home/thomasrw/Desktop"
 
-demand = demandpath + demandfile
+#demand = demandpath + demandfile
+#running local - using full  path as argument
+demand = demandfile
 
 pltnsize = int(sys.argv[3])
 
-additional = "/home/thoma525/myOUT-route.xml," + demand + ",/home/thoma525/detPOI_OUT.xml,/home/thoma525/valCount.xml"
+#additional = "/home/thoma525/myOUT-route.xml," + demand + ",/home/thoma525/detPOI_OUT.xml,/home/thoma525/valCount.xml"
+#below for local run only
+additional = "/home/thomasrw/Model/HPC/home/myOUT-route.xml," + demand + ",/home/thomasrw/Model/HPC/home/detPOI_OUT.xml,/home/thomasrw/Model/HPC/home/valCount.xml"
 
 if __name__ == "__main__":
     options = get_options()
@@ -103,9 +108,12 @@ if __name__ == "__main__":
         sumoBinary = "/usr/share/sumo/bin/sumo-gui"
 
     # passing the "--start" option to tell sumo-gui to begin without waiting for the play button to be pressed
-    sumoCmd = [sumoBinary, "-c", "/home/thoma525/myconfig", "-a", additional, "--output-prefix", logname, "--start"]
+    #sumoCmd = [sumoBinary, "-c", "/home/thoma525/myconfig", "-a", additional, "--output-prefix", logname, "--start"]
+    sumoCmd = [sumoBinary, "-c", "/home/thomasrw/Model/HPC/home/myconfig.bluelight", "-a", additional, "--output-prefix", logname, "--start"]
     #sumoCmd = [sumoBinary, "-c", "/home/thomasrw/Model/myconfig"]
-    simplaConfig = "/home/thoma525/mysimpla.cfg.xml"
+    simplaConfig = "/home/thomasrw/Model/HPC/home/mysimpla.cfg.xml"
+    #simplaConfig = "/usr/share/sumo/tools/simpla/template.cfg.xml"
+
     #simplaConfig2 = "/home/thomasrw/Model/mysimpla2.cfg.xml"
 
 
