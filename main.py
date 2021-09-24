@@ -35,7 +35,8 @@ def run():
 
     #setup VMT logfile
     log = logname + "platoon_status.xml"
-    file = '/home/thomasrw/Desktop/' + log
+    file = workdir + log
+    #file = '/home/thomasrw/Desktop/' + log
     #file = '/work/thoma525/' + log
 
     logfile = open(file, 'w')
@@ -88,7 +89,9 @@ logname = logname + "_"
 
 demandfile = sys.argv[2]
 #demandpath = "/work/thoma525/"
-demandpath = "/home/thomasrw/Desktop"
+
+demandpath = sys.argv[5]
+#demandpath = "/home/thomasrw/Desktop"
 
 #demand = demandpath + demandfile
 #running local - using full  path as argument
@@ -96,9 +99,16 @@ demand = demandfile
 
 pltnsize = int(sys.argv[3])
 
+workdir = sys.argv[4]
+
 #additional = "/home/thoma525/myOUT-route.xml," + demand + ",/home/thoma525/detPOI_OUT.xml,/home/thoma525/valCount.xml"
 #below for local run only
-additional = "/home/thomasrw/Model/HPC/home/myOUT-route.xml," + demand + ",/home/thomasrw/Model/HPC/home/detPOI_OUT.xml,/home/thomasrw/Model/HPC/home/valCount.xml"
+outroute = sys.argv[8]
+detPOIout = sys.argv[9]
+valcount = sys.argv[10]
+additional = outroute + "," + demand + "," + detPOIout + "," + valcount
+#additional = "/home/thomasrw/Model/HPC/home/myOUT-route.xml," + demand + ",/home/thomasrw/Model/HPC/home/detPOI_OUT.xml,/home/thomasrw/Model/HPC/home/valCount.xml"
+
 
 if __name__ == "__main__":
     options = get_options()
@@ -109,9 +119,13 @@ if __name__ == "__main__":
 
     # passing the "--start" option to tell sumo-gui to begin without waiting for the play button to be pressed
     #sumoCmd = [sumoBinary, "-c", "/home/thoma525/myconfig", "-a", additional, "--output-prefix", logname, "--start"]
-    sumoCmd = [sumoBinary, "-c", "/home/thomasrw/Model/HPC/home/myconfig.bluelight", "-a", additional, "--output-prefix", logname, "--start"]
+    config = sys.argv[6]
+    #sumoCmd = [sumoBinary, "-c", "/home/thomasrw/Model/HPC/home/myconfig.bluelight", "-a", additional, "--output-prefix", logname, "--start"]
+    sumoCmd = [sumoBinary, "-c", config, "-a", additional, "--output-prefix", logname, "--start"]
+
     #sumoCmd = [sumoBinary, "-c", "/home/thomasrw/Model/myconfig"]
-    simplaConfig = "/home/thomasrw/Model/HPC/home/mysimpla.cfg.xml"
+    simplaConfig = sys.argv[7]
+    #simplaConfig = "/home/thomasrw/Model/HPC/home/mysimpla.cfg.xml"
     #simplaConfig = "/usr/share/sumo/tools/simpla/template.cfg.xml"
 
     #simplaConfig2 = "/home/thomasrw/Model/mysimpla2.cfg.xml"
