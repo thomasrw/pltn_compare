@@ -1,4 +1,5 @@
- #Copyright (c) 2020 Robert Thomas
+ #Copyright (c) 2021 Robert Thomas
+ #_utils2.py version 2
 
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -46,6 +47,7 @@ import traci._vehicle
 import simpla
 from simpla._utils import openGap
 import simpla._config as cfg
+import random
 
 from xml.etree import ElementTree
 
@@ -160,6 +162,61 @@ def seekLeader(vehID, dist):
     '''
 
     return traci.vehicle.getLeader(vehID, dist)
+
+def seekLeader2(vehID, dist, pmethod, mgr):
+    '''
+
+    :param vehID: String vehicle id seeking leader
+    :param dist: double minimum lookahead
+    :param pmethod: int key for determining how to filter results based on platoon method
+        1 = dynnamic
+        2 = ad hoc game
+        3 = orchestrated (pre-approved)
+    :param mgr: Platoon Manager
+    :return: (string, double) matching vehID and distance
+        Note that the returned leader may be further away than the given dist and that the vehicle
+        will only look on its current best lanes and not look beyond the end of its final route edge.
+    '''
+
+    maybe = traci.vehicle.getLeader(vehID, dist)
+    status = mgr.getStatus()
+    if maybe == None: #no lead found
+        return maybe
+    elif pmethod == 1:
+        return maybe
+    elif pmethod == 2:
+        #check deny list for pltn leader of 'mabye', if not there, return maybe
+        print("maybe[0] is: " + maybe[0])
+        if not mgr._isConnected(maybe[0]):
+            print(maybe[0] + " is not connected")
+            return maybe
+        PLeader = mgr._connectedVehicles[maybe[0]].getPlatoon().getLeader()
+        if (PLeader, mgr._connectedVehicles[maybe[0]])  in status:
+            if  status[(PLeader, mgr._connectedVehicles[maybe[0]])]: #true means approved
+                return maybe
+            else: return None #false means not approved, reutrn None to preclude further consideration
+        else: #status unknown - need to play adhoc game to determine platoon approval status
+            status[(PLeader,mgr._connectedVehicles[maybe[0]])] = dynamicPlatoonAdHocPlatoonGame(mgr._connectedVehicles[maybe[0]].getPlatoon(), PLeader.getPlatoon())
+            status[(mgr._connectedVehicles[maybe[0]],PLeader)] = status[(PLeader, mgr._connectedVehicles[maybe[0]])] #tuple part order should not matter
+            mgr.updateStatus(status)
+
+            if  status[(PLeader,mgr._connectedVehicles[maybe[0]])]: #true means approved
+                return maybe
+            else: return None
+
+    elif pmethod == 3:
+        #check approved list - list must be complete for the sim
+        if not mgr._isConnected(maybe[0]):
+            print(maybe[0] + " is not connected")
+            return maybe
+        PLeader = mgr._connectedVehicles[maybe[0]].getPlatoon().getLeader()
+        if PLeader in status and status[PLeader]:
+            return maybe
+        else: return None
+
+    else:
+        print("unexpected condition seeking leader")
+        return None
 '''
     #list of nearby (with in dist) vehicles in front of vehicle(vehID), to include neighboring lanes
     leaders=[]
@@ -414,9 +471,49 @@ def dynamicPlatoonAdHocPlatoonGame(pltn1, pltn2):
     #--at next step try to join again (no need to negotiate)
 
     #front veh becomes leader, simple
-    #rear veh becomes leader, how to have other platoon members overtake the new veh joining from the front
+    #rear veh becomes leader, still join as normal, aggregate metrics will still be accurate
 
-    pass
+    print("*************************** checking game status ********************")
+
+    player1 = pltn1.getLeader()
+    player2 = pltn2.getLeader()
+
+    #assumes first encounter
+    #todo implement 'history' -> matchup would already have a status (matters for TFT and Grudger)
+    if player1.getID().startswith('c') or player2.getID().startswith('c'):
+        return True
+    if player1.getID().startswith('t') or player2.getID().startswith('t'): #first instance will be true
+        #todo playout and record results to history
+        return True
+    if player1.getID().startswith('g') or player2.getID().startswith('g'): #first instance will be true
+        #todo playout and record results to history
+        return True
+    if player1.getID().startswith('d'):
+        if player2.getID().startswith('d'):
+            return False
+        elif player2.getID().startswith('r'):
+            return random.randrange(10) < 5 #50% chance random will cooperate
+        else:
+            print("unexpected condition while playing Ad Hoc Game")
+            return False
+    elif player1.getID().startswith('r'):
+        if random.randrange(10) < 5: #50% chance random will cooperate
+            return True
+        # evaluate player 2 if player 1 (r) did not cooperate
+        elif player2.getID().startswith('r'):
+            return random.randrange(10) < 5 #50% chance random will cooperate
+        elif player2.getID().startswith('d'):
+            return False #defector does not cooperate and random has already chosen not to cooperate
+        else:
+            print("unexpected condition while playing Ad Hoc Game")
+            return False
+    else:
+        print("unexpected condition while playing Ad Hoc Game")
+        return False
+
+
+
+    #return True #always approve for testing integration of method call
 
 def centralPlatoonClustering(emitterFile, maxsize=-1):
     '''

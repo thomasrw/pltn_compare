@@ -1,4 +1,5 @@
- #Copyright (c) 2020 Robert Thomas
+ #Copyright (c) 2021 Robert Thomas
+ # _platoonmanger2.py version 2
 
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -85,7 +86,13 @@ class PlatoonManager2(simpla._platoonmanager.PlatoonManager):
         simpla._platoonmanager.PlatoonManager.__init__(self)
         self._MAX_PLATOON_SIZE = maxsize
         self._hasVehBehind = dict()
+        self._pltnApprovalStatus = dict() #used to remember pre-approved(or denied) platoon pairings
 
+    def getStatus(self):
+        return self._pltnApprovalStatus
+
+    def updateStatus(self, status):
+        self._pltnApprovalStatus = status
 
     def step(self, t=0):
         '''
@@ -181,7 +188,9 @@ class PlatoonManager2(simpla._platoonmanager.PlatoonManager):
 
             # PLTNMGR2 replaces call to traci.vehicle.getLeader with _utils2.seekLeader
             print("veh: " + veh.getID())
-            veh.state.leaderInfo = _utils2.seekLeader(veh.getID(), self._catchupDist)
+            #veh.state.leaderInfo = _utils2.seekLeader(veh.getID(), self._catchupDist)
+            veh.state.leaderInfo = _utils2.seekLeader2(veh.getID(), self._catchupDist, 2, self)
+
             print("first call:" )
 
             if veh.state.leaderInfo is None:
@@ -209,7 +218,8 @@ class PlatoonManager2(simpla._platoonmanager.PlatoonManager):
                         #PLTNMGR2 replaces call to traci.vehicle.getLeader with _utils2.seekLeader
                         print('in the while loop')
                         print(dist)
-                        nextLeaderInfo = _utils2.seekLeader(vehAheadID, self._catchupDist - dist)
+                        #nextLeaderInfo = _utils2.seekLeader(vehAheadID, self._catchupDist - dist)
+                        nextLeaderInfo = _utils2.seekLeader2(vehAheadID, self._catchupDist - dist, 2, self)
                         print("this call:")# + nextLeaderInfo)
                         if nextLeaderInfo is None:
                             break
