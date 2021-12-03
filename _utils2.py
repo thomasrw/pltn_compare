@@ -191,16 +191,20 @@ def seekLeader2(vehID, dist, pmethod, mgr):
             print(maybe[0] + " is not connected")
             return maybe
         PLeader = mgr._connectedVehicles[maybe[0]].getPlatoon().getLeader()
-        if (PLeader, mgr._connectedVehicles[maybe[0]])  in status:
-            if  status[(PLeader, mgr._connectedVehicles[maybe[0]])]: #true means approved
+        trailingVeh = mgr._connectedVehicles[vehID]
+        trailingPltn = trailingVeh.getPlatoon()
+
+        #if (PLeader, mgr._connectedVehicles[maybe[0]])  in status:
+        if (PLeader, trailingVeh) in status:
+            if  status[(PLeader,trailingVeh)]: #true means approved
                 return maybe
             else: return None #false means not approved, reutrn None to preclude further consideration
         else: #status unknown - need to play adhoc game to determine platoon approval status
-            status[(PLeader,mgr._connectedVehicles[maybe[0]])] = dynamicPlatoonAdHocPlatoonGame(mgr._connectedVehicles[maybe[0]].getPlatoon(), PLeader.getPlatoon())
-            status[(mgr._connectedVehicles[maybe[0]],PLeader)] = status[(PLeader, mgr._connectedVehicles[maybe[0]])] #tuple part order should not matter
+            status[(PLeader,trailingVeh)] = dynamicPlatoonAdHocPlatoonGame(trailingVeh.getPlatoon(), PLeader.getPlatoon())
+            status[(trailingVeh,PLeader)] = status[(PLeader, trailingVeh)] #tuple part order should not matter
             mgr.updateStatus(status)
 
-            if  status[(PLeader,mgr._connectedVehicles[maybe[0]])]: #true means approved
+            if  status[(PLeader,trailingVeh)]: #true means approved
                 return maybe
             else: return None
 
@@ -477,18 +481,57 @@ def dynamicPlatoonAdHocPlatoonGame(pltn1, pltn2):
 
     player1 = pltn1.getLeader()
     player2 = pltn2.getLeader()
+    print(player1.getID() + "," + player2.getID())
+    history = '/home/thomasrw/Desktop/historya.txt'
+    #history = '/work/thoma525/history.txt'
+    logfile = open(history, 'a')
+    #logfile.close()
 
     #assumes first encounter
     #todo implement 'history' -> matchup would already have a status (matters for TFT and Grudger)
     if player1.getID().startswith('c') or player2.getID().startswith('c'):
+        logfile.close()
+
         return True
     if player1.getID().startswith('t') or player2.getID().startswith('t'): #first instance will be true
         #todo playout and record results to history
+        if player1.getID().startswith('d') or player2.getID().startswith('d'): #all future attempts will fail
+            logfile.write(player1.getID() + "," + player2.getID() + ",deny\n")
+            logfile.write(player2.getID() + "," + player1.getID() + ",deny\n") #order of players should not matter
+        if player1.getID().startswith('r') or player2.getID().startswith('r'):
+            if random.randrange(10) < 5:  # 50% chance random will cooperate, so next attempt will pass too
+                logfile.write(player1.getID() + "," + player2.getID() + ",approve_mod\n") #need to replay to determine turn after next
+                logfile.write(player2.getID() + "," + player1.getID() + ",approve_mod\n")  # order of players should not matter
+            else:   #next attempt tft player will defect, but r player may cooperate
+                logfile.write(player1.getID() + "," + player2.getID() + ",random_mod\n") #update tft play for next time, regardless of outcome
+                logfile.write(player2.getID() + "," + player1.getID() + ",random_mod\n")  # order of players should not matter
+
+        logfile.close()
+
         return True
     if player1.getID().startswith('g') or player2.getID().startswith('g'): #first instance will be true
         #todo playout and record results to history
+        if player1.getID().startswith('d') or player2.getID().startswith('d'): #all future attempts will fail
+            logfile.write(player1.getID() + "," + player2.getID() + ",deny\n")
+            logfile.write(player2.getID() + "," + player1.getID() + ",deny\n") #order of players should not matter
+
+        if player1.getID().startswith('r') or player2.getID().startswith('r'):
+            if random.randrange(10) < 5:  # 50% chance random will cooperate, so next attempt will pass too
+                logfile.write(player1.getID() + "," + player2.getID() + ",approve_mod\n") #need to replay to determine turn after next
+                logfile.write(player2.getID() + "," + player1.getID() + ",approve_mod\n")  # order of players should not matter
+
+            else: #all future attempts fail
+                logfile.write(player1.getID() + "," + player2.getID() + ",deny\n")
+                logfile.write(player2.getID() + "," + player1.getID() + ",deny\n")  # order of players should not matter
+
+        logfile.close()
+
         return True
+    logfile.close()
+
     if player1.getID().startswith('d'):
+        logfile.close()
+
         if player2.getID().startswith('d'):
             return False
         elif player2.getID().startswith('r'):
