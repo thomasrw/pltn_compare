@@ -486,8 +486,8 @@ def dynamicPlatoonAdHocPlatoonGame(pltn1, pltn2):
     player1 = pltn1.getLeader()
     player2 = pltn2.getLeader()
     print(player1.getID() + "," + player2.getID())
-    history = '/home/thomasrw/Desktop/historya.txt'
-    #history = '/work/thoma525/history.txt'
+    #history = '/home/thomasrw/Desktop/historya.txt'
+    history = '/work/thoma525/history.txt'
     logfile = open(history, 'a')
     #logfile.close()
 
