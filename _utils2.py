@@ -191,7 +191,11 @@ def seekLeader2(vehID, dist, pmethod, mgr):
             print(maybe[0] + " is not connected")
             return maybe
         PLeader = mgr._connectedVehicles[maybe[0]].getPlatoon().getLeader()
-        trailingVeh = mgr._connectedVehicles[vehID]
+        try:
+            trailingVeh = mgr._connectedVehicles[vehID]
+        except:
+            print(vehID + " VehID not found")
+            return None
         trailingPltn = trailingVeh.getPlatoon()
 
         #if (PLeader, mgr._connectedVehicles[maybe[0]])  in status:
