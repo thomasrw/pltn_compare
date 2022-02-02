@@ -491,12 +491,57 @@ def dynamicPlatoonAdHocPlatoonGame(pltn1, pltn2):
     logfile = open(history, 'a')
     #logfile.close()
 
-    #assumes first encounter
-    #todo implement 'history' -> matchup would already have a status (matters for TFT and Grudger)
+    #assumes not first encounter
+
+    #always platoon conditions: c:*, t:t, g:g, t:g, g:t
     if player1.getID().startswith('c') or player2.getID().startswith('c'):
         logfile.close()
+        return True #cooperator always platoons
 
-        return True
+    if player1.getID().startswith('t') and player2.getID().startswith('t'):
+        logfile.close()
+        return True #TforT always platoons with itself
+
+    if player1.getID().startswith('g') and player2.getID().startswith('g'):
+        logfile.close()
+        return True #Grudger always platoons with itself
+
+    if player1.getID().startswith('t') and player2.getID().startswith('g'):
+        logfile.close()
+        return True #TforT always platoons with Grudger
+
+    if player1.getID().startswith('g') and player2.getID().startswith('t'):
+        logfile.close()
+        return True #Grudger always platoons with TforT
+
+    #never platoon (includes beyond 1st encounter)
+    if player1.getID().startswith('d') and player2.getID().startswith('d'):
+        logfile.close()
+        return False #D:D always denies
+
+    if player1.getID().startswith('d') or player2.getID().startswith('d'):
+        if player1.getID().startswith('t') or player2.getID().startswith('t'):
+            logfile.close()
+            return False #D:T always denies after first encounter
+        elif player1.getID().startswith('g') or player2.getID().startswith('g'):
+            logfile.close()
+            return False  # D:G always denies after first encounter
+
+    #always a chance with random...
+    if player1.getID().startswith('r') and player2.getID().startswith('r'):
+        logfile.close()
+        return random.randrange(100) < 75 #R:R will platoon 75% of the time (when one or both choose cooperate)
+
+    if player1.getID().startswith('r') or player2.getID().startswith('r'):
+        if player1.getID().startswith('d') and player2.getID().startswith('d'):
+            return random.randrange(100) < 50 #R will still cooperate 50% of the time
+        if player1.getID().startswith('g') and player2.getID().startswith('g'):
+            return random.randrange(100) < 50 #G will eventually deny all but R will still cooperate 50% of the time
+        if player1.getID().startswith('t') and player2.getID().startswith('t'):
+            return random.randrange(100) < 75 #R will cooperate 50% of the time meaning T will cooperate on the next turn
+
+
+    '''
     if player1.getID().startswith('t') or player2.getID().startswith('t'): #first instance will be true
         #todo playout and record results to history
         if player1.getID().startswith('d') or player2.getID().startswith('d'): #all future attempts will fail
@@ -561,7 +606,7 @@ def dynamicPlatoonAdHocPlatoonGame(pltn1, pltn2):
 
 
     #return True #always approve for testing integration of method call
-
+    '''
 def centralPlatoonClustering(emitterFile, maxsize=-1):
     '''
     Centralized Platoon Coordination implementation based on Van De Hoef, S. Johansson, K. H., & Dimarogonas, D. V.
