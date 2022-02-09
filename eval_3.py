@@ -144,6 +144,8 @@ def eval2(baseline=baseline, input=input, log=log, platoon=platoon):
 
         id = vehatt.attrib['id']
         core = id
+        #remove core trim of id due to using non-platooning CAV000 inputs vice original demands (without strategy prefixes)
+        '''
         if id.startswith('coop'):
             core = core[4:]
         elif id.startswith('def'):
@@ -154,7 +156,7 @@ def eval2(baseline=baseline, input=input, log=log, platoon=platoon):
             core = core[4:]
         elif id.startswith('rand'):
             core = core[4:]
-
+        '''
         if core in veh.keys():
             veh2[vehatt.attrib['id']] = 0
             print('match')
