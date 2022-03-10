@@ -357,19 +357,21 @@ print('Mean NOx: ' + str(NOx/count))
 #eval()
 
 
-Baseline = mypath + 'CAV000_' + str(run) + '_tripinfo'
+#Baseline = mypath + 'CAV000_' + str(run) + '_tripinfo'
+Baseline = mypath + prefix + '_'+ str(run) + '_' + '0' + '_tripinfo'
 Input = mypath + prefix + '_'+ str(run) + '_' + str(mysize) + '_tripinfo'
 Log = mypath + mylog + '_metrics.csv'
-Platoon = mypath + prefix + '_' + str(run) + '_' + str(mysize) + '_platoon_status.xml'
+Platoon = mypath + 'demand/' + prefix + '_' + str(run) + '_' + str(mysize) + '_platoon_status.xml'
 #eval(Input, Log, Platoon)
 
 
 #remove after cleantest
+'''
 Baseline = mypath + 'cleantestbaseline_tripinfo'
 Input = mypath + 'cleantest_tripinfo'
 Log = mypath + 'cleantest_log_metrics.csv'
 Platoon = mypath + 'demand/cleantest_platoon_status.xml'
-
+'''
 print(Baseline)
 print(Input)
 print(Log)
