@@ -6,7 +6,7 @@
 ##SBATCH -c 10    #cpus per task commented out per Nathan Elger guidance	
 #SBATCH -x /work/public/exclude_defq #avoids use of partner nodes subj to suspension
 ##SBATCH --output=/dev/null  #suppress standard output
-##SBATCH --error=/dev/null   #suppress standard error
+#SBATCH --error=/work/thoma525/slurm_errors-%j.out   #suppress standard error
 
 ##todo run demand_formatter.py on CAV [arg1] _ [arg2] to ensure catchup properly defined
 ##todo CAV [array task] for inputs 100-199 for sizes x
