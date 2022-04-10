@@ -46,6 +46,9 @@ j=$((j + 1))
 i=$((i + 1))
 done
 wait
+#clean up along the way to manage space by removing un-needed platoon status logs and validation_dets.xml
+rm /work/thoma525/demand/CAV*status*
+rm /work/thoma525/CAV*validation_dets.xml
 done
 
 #collect metrics for all CAV$PERCENT runs (100-199), ten at a time
