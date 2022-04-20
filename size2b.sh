@@ -5,8 +5,8 @@
 #SBATCH -n 10     #tasks requested changed to number of cores needed per Nathan Elger guidance
 ##SBATCH -c 10    #cpus per task commented out per Nathan Elger guidance	
 #SBATCH -x /work/public/exclude_defq #avoids use of partner nodes subj to suspension
-##SBATCH --output=/dev/null  #suppress standard output
-##SBATCH --error=/dev/null   #suppress standard error
+#SBATCH --output=/dev/null  #suppress standard output
+#SBATCH --error=/work/thoma525/slurm_errors-%j.out   #suppress standard error
 
 ##todo run demand_formatter.py on CAV [arg1] _ [arg2] to ensure catchup properly defined
 ##todo CAV [array task] for inputs 100-199 for sizes x
@@ -25,15 +25,17 @@ SIZE="2"
 PERCENT=$(printf "%03d" $SLURM_ARRAY_TASK_ID)
 
 #cleans CAV$PERCENT for test_num's 100-199 one at a time (shouldn't take long)
-i="100"
-while [ $i -lt 200 ]
-do
-python3 /work/thoma525/demand_formatter.py $PERCENT $i
-i=$((i + 1))
-done
+#i="100"
+#while [ $i -lt 200 ]
+#do
+#python3 /work/thoma525/demand_formatter.py $PERCENT $i
+#i=$((i + 1))
+#done
 
 #run CAV$PERCENT for test_num's 100-199, ten at a time
 j="100"
+k="100"
+l="100"
 while [ $j -lt 200 ]
 do
 i="0"
@@ -46,41 +48,64 @@ j=$((j + 1))
 i=$((i + 1))
 done
 wait
-done
-
-#collect metrics for all CAV$PERCENT runs (100-199), ten at a time
-
-j="100"
-k="100"
-while [ $j -lt 200 ]
-do
+#todo process batch of 10 for metric collection
 i="0"
 while [ $i -lt 10 ]
 do
-python3 /work/thoma525/eval_3.py CAV$PERCENT $j CAV$PERCENT"_size_${SIZE}" $SIZE &
-j=$((j + 1))
+python3 /work/thoma525/eval_3.py CAV$PERCENT $k CAV$PERCENT"_size_${SIZE}" $SIZE &
+
+k=$((k + 1))
 i=$((i + 1))
 done
 wait
+#todo clean up
+while [ $l -lt $j ]
+do
+rm /work/thoma525/CAV$PERCENT"_${l}""_${SIZE}""_tripinfo"
+rm /work/thoma525/demand/CAV$PERCENT"_${l}""_${SIZE}""_platoon_status.xml"
+rm /work/thoma525/CAV$PERCENT"_${l}""_${SIZE}""_validation_dets.xml"
+l=$((l + 1))
+done
+#todo final clean up
+rm /work/thoma525/CAV$PERCENT"_${j}""_${SIZE}""_tripinfo"
+rm /work/thoma525/demand/CAV$PERCENT"_${j}""_${SIZE}""_platoon_status.xml"
+rm /work/thoma525/CAV$PERCENT"_${j}""_${SIZE}""_validation_dets.xml"
+done
+
+
+#collect metrics for all CAV$PERCENT runs (100-199), ten at a time
+
+#j="100"
+#k="100"
+#while [ $j -lt 200 ]
+#do
+#i="0"
+#while [ $i -lt 10 ]
+#do
+#python3 /work/thoma525/eval_3.py CAV$PERCENT $j CAV$PERCENT"_size_${SIZE}" $SIZE &
+#j=$((j + 1))
+#i=$((i + 1))
+#done
+#wait
 
 
 #clean up after each run of 10
 #no cleanup for size 0 "baseliine"
-while [ $k -lt $j ]
-do
-rm /work/thoma525/CAV$PERCENT"_${k}""_${SIZE}""_tripinfo"
-rm /work/thoma525/demand/CAV$PERCENT"_${k}""_${SIZE}""_platoon_status.xml"
-rm /work/thoma525/CAV$PERCENT"_${k}""_${SIZE}""_validation_dets.xml"
-k=$((k + 1))
-done
+#while [ $k -lt $j ]
+#do
+#rm /work/thoma525/CAV$PERCENT"_${k}""_${SIZE}""_tripinfo"
+#rm /work/thoma525/demand/CAV$PERCENT"_${k}""_${SIZE}""_platoon_status.xml"
+#rm /work/thoma525/CAV$PERCENT"_${k}""_${SIZE}""_validation_dets.xml"
+#k=$((k + 1))
+#done
 
-done
+#done
 
 #final clean up log files from simulation runs, leaving behind only metrics.csv file
 #no cleanup for size 0 "baseline"
-rm /work/thoma525/CAV$PERCENT"_${j}""_${SIZE}""_tripinfo"
-rm /work/thoma525/demand/CAV$PERCENT"_${j}""_${SIZE}""_platoon_status.xml"
-rm /work/thoma525/CAV$PERCENT"_${j}""_${SIZE}""_validation_dets.xml"
+#rm /work/thoma525/CAV$PERCENT"_${j}""_${SIZE}""_tripinfo"
+#rm /work/thoma525/demand/CAV$PERCENT"_${j}""_${SIZE}""_platoon_status.xml"
+#rm /work/thoma525/CAV$PERCENT"_${j}""_${SIZE}""_validation_dets.xml"
 
 
 
