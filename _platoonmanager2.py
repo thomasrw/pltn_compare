@@ -155,11 +155,11 @@ class PlatoonManager2(simpla._platoonmanager.PlatoonManager):
 
     def sizePolicyExists(self):
         '''
-        Returns True if _MAX_PLATOON_SIZE is set >= 1
+        Returns True if _MAX_PLATOON_SIZE is set >= 0
         :return: bool
         '''
-        #Platoon size less than 1 is not enforceable
-        if self.getMaxSize() >= 1:
+        #Platoon size 0 or 1 are effectively no platooning
+        if self.getMaxSize() >= 0:
             return True
         else:
             return False
