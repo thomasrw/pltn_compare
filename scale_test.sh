@@ -31,7 +31,7 @@ PERCENT=$(printf "%03d" $SLURM_ARRAY_TASK_ID)
 i="0"
 while [ $i -lt 10 ]
 do
-/work/thoma525/pltn_compare/load_for_scale_test.sh $SLURM_TASK_PID
+/work/thoma525/pltn_compare/load_for_scale_test.sh $SLURM_TASK_PID $i &
 i=$((i + 1))
 done
 wait
