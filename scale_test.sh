@@ -30,7 +30,7 @@ PERCENT=$(printf "%03d" $SLURM_ARRAY_TASK_ID)
 i="0"
 while [ $i -lt 10 ]
 do
-echo "Task $SLURM_TASK_PID: Message $i executed on CPU core $SLURM_CPUS_PER_TASK"
+echo "Task $SLURM_TASK_PID: Message $i executed on CPU core $SLURM_NPROCS or $SLURM_NTASKS"
 i=$((i + 1))
 done
 wait
