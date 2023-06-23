@@ -31,6 +31,7 @@ i="0"
 while [ $i -lt 10 ]
 do
 echo "Task $task_id: Message $i executed on CPU core $SLURM_CPU_BIND_LIST"
+i=$((i + 1))
 done
 wait
 
