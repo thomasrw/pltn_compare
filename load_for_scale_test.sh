@@ -9,6 +9,7 @@ j=1
 end=$((SECONDS+60))
 while [ $SECONDS -lt $end ]; do
 j=$((j + 1))
+j=$((j - 1))
 done
 now=$(date)
 echo "Task $task_id loop number $loop_number completed $now on core $mycpu"
