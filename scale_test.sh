@@ -10,6 +10,7 @@
 #SBATCH --output=/work/thoma525/slurm_errors-%A.out
 #SBATCH --open-mode=append
 #SBATCH --error=/work/thoma525/slurm_errors-%j.out   #suppress standard error
+#SBATCH --cpu-bind=verbose
 
 ##todo run demand_formatter.py on CAV [arg1] _ [arg2] to ensure catchup properly defined
 ##todo CAV [array task] for inputs 100-199 for sizes x
@@ -30,7 +31,7 @@ PERCENT=$(printf "%03d" $SLURM_ARRAY_TASK_ID)
 i="0"
 while [ $i -lt 10 ]
 do
-echo "Task $SLURM_TASK_PID: Message $i executed on CPU core $SLURM_NPROCS or $SLURM_NTASKS"
+echo "Task $SLURM_TASK_PID: Message $i executed on CPU core $SLURM_NPROCS or $SLURM_NTASKS or $SLURM_CPU_BIND_LIST" &
 i=$((i + 1))
 done
 wait
