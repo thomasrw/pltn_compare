@@ -43,7 +43,7 @@ i="0"
 while [ $i -lt 10 ]
 do
 #/work/thoma525/helloTraci.py CAV$PERCENT"_${j}""_${SIZE}" CAV$PERCENT"_${j}" $SIZE --nogui &
-/work/thoma525/main.py CAV$PERCENT"_${j}""_${SIZE}" /work/thoma525/demand/CAV$PERCENT"_${j}" $SIZE /work/thoma525/demand/ /work/thoma525/ /home/thoma525/myconfig /home/thoma525/mysimpla.cfg.xml /home/thoma525/myOUT-route.xml /home/thoma525/detPOI_OUT.xml /home/thoma525/valCount.xml --nogui
+/work/thoma525/main.py CAV$PERCENT"_${j}""_${SIZE}" /work/thoma525/demand/CAV$PERCENT"_${j}" $SIZE /work/thoma525/demand/ /work/thoma525/ /home/thoma525/myconfig /home/thoma525/mysimpla.cfg.xml /home/thoma525/myOUT-route.xml /home/thoma525/detPOI_OUT.xml /home/thoma525/valCount.xml --nogui &
 
 j=$((j + 1))
 i=$((i + 1))
