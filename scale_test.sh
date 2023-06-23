@@ -4,7 +4,7 @@
 #SBATCH --partition=defq-64core #temp during defq maintenance
 ##SBATCH -N 1     #nodes requested
 #SBATCH -n 2     #tasks requested changed to number of cores needed per Nathan Elger guidance
-##SBATCH -c 10    #cpus per task commented out per Nathan Elger guidance	
+#SBATCH -c 2    #cpus per task commented out per Nathan Elger guidance
 ##SBATCH -x /work/public/exclude_defq #avoids use of partner nodes subj to suspension #temp remove during defq maintenance check before next submission
 ##SBATCH --output=/dev/null  #suppress standard output
 #SBATCH --output=/work/thoma525/slurm_errors-%A.out
